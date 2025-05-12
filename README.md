@@ -28,7 +28,7 @@ VolControl transforms an **Arduino Pro Micro (ATmega32U4)**, an **SSD1306 OLED**
 
 ### 1. Arduino Sketch
 
-1. Open `VolControl.ino` in the Arduino IDE.  
+1. Open `Main.cpp` in the PlatformIO.  
 2. Verify/adjust I2C pins and encoder pins if needed.  
 3. Upload to the Pro Micro.
 
