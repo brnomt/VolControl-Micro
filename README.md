@@ -56,7 +56,7 @@ A Python script reads serial data and controls Windows volume using **PyCAW**.
 4. Plug in VolControl via USB and run:
 
    ```bash
-   python volcontrol.py
+   python VolControl-SerialCOM.py
    ```
 
 ---
