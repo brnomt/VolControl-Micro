@@ -1,0 +1,4 @@
+comtypes
+pycaw
+pyaudio
+pyserial
