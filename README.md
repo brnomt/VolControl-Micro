@@ -1,4 +1,3 @@
-```markdown
 # 🎛️ VolControl
 
 > A DIY volume knob & device switcher for Windows  
@@ -32,12 +31,6 @@ VolControl transforms an **Arduino Pro Micro (ATmega32U4)**, an **SSD1306 OLED**
 1. Open `VolControl.ino` in the Arduino IDE.  
 2. Verify/adjust I2C pins and encoder pins if needed.  
 3. Upload to the Pro Micro.
-
-```cpp
-// VolControl - For Arduino Pro Micro (ATmega32U4)
-// Author: brnomt
-// Uses SSD1306, EC11 encoder & F13 key for device switching
-```
 
 ### 2. Python Controller (PC)
 
