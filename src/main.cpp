@@ -5,7 +5,7 @@
 // This code is for a volume control device using an SSD1306 OLED display and an EC11 encoder
 // It allows you to change the volume of a device and switch between devices using a button.
 
-// The reason the Encoder uses F13 key, is because it is a key that does not have a function in Windows, so it will not interfere with anything.
+// The reason the Encoder uses F13 key, is because it is a key that does not have a function in Windows (iirc), so it will not interfere with anything.
 // The F13 key is used to switch between devices, so you can use it to switch between devices without having to use the mouse.
 // This is used to change the device via SoundSwitch software. Made by @Belphemur on Github.
 
