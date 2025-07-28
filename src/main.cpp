@@ -32,11 +32,17 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Encoder.h>
-#include <HID-Project.h> // Requiere el HID-Project de NicoHood
+#include <HID-Project.h> // Requires Nicohood HID-Project library
+
+/*
+Nicohood HID-Project library:
+https://github.com/NicoHood/HID
+*/
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
+//Create display object
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 // Encoder
@@ -44,49 +50,49 @@ Encoder myEncoder(7, 6);  // DT, CLK
 const int swPin = 8;
 
 // Estado
-int volumen = 50;
-long posicionEncoder = 0;
-String dispositivoAudio = "No device";
+int volume = 50;
+long encoderPosition = 0;
+String audioDevice = "No device";
 
-unsigned long ultimoCambioVolumen = 0;
-const int debounceTiempo = 50;
+unsigned long lastVolumeChange = 0;
+const int debounceTime = 50;
 
 // Botón
-int estadoBoton;
-int ultimoEstadoBoton = HIGH;
-unsigned long ultimoDebounceTime = 0;
+int buttonState;
+int lastbuttonState = HIGH;
+unsigned long lastDebounceTime = 0;
 const int debounceDelay = 50;
 
 // Serial buffer
 String inputString = "";
 bool stringComplete = false;
 
-void actualizarPantalla() {
+void updateDisplay() {
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   
   display.setCursor(0, 0);
   display.println("Output:");
-  display.println(dispositivoAudio.substring(0, 21));
+  display.println(audioDevice.substring(0, 21));
   
   display.drawLine(0, 20, 128, 20, SSD1306_WHITE);
   
-  int anchoBarra = map(volumen, 0, 100, 0, 118);
-  display.fillRect(5, 25, anchoBarra, 20, SSD1306_WHITE);
+  int barWidth = map(volume, 0, 100, 0, 118);
+  display.fillRect(5, 25, barWidth, 20, SSD1306_WHITE);
   display.drawRect(5, 25, 118, 20, SSD1306_WHITE);
   
   display.setCursor(0, 50);
   display.print("Vol: ");
-  display.print(volumen);
+  display.print(volume);
   display.print("%");
 
   display.display();
 }
 
-void cambiarVolumen(int delta) {
-  volumen += delta * 2;
-  volumen = constrain(volumen, 0, 100);
+void changeVolume(int delta) {
+  volume += delta * 2;
+  volume = constrain(volume, 0, 100);
   
   if (delta > 0) {
     Consumer.write(MEDIA_VOLUME_UP);
@@ -94,7 +100,7 @@ void cambiarVolumen(int delta) {
     Consumer.write(MEDIA_VOLUME_DOWN);
   }
 
-  ultimoCambioVolumen = millis();
+  lastVolumeChange = millis();
 }
 
 void switchDevice() {
@@ -103,7 +109,7 @@ void switchDevice() {
   Keyboard.release(KEY_F13);
 }
 
-void serialEvent() {
+void readSerial() {
   while (Serial.available()) {
     char inChar = (char)Serial.read();
     if (inChar == '\n') {
@@ -116,17 +122,17 @@ void serialEvent() {
   }
 }
 
-void procesarSerial() {
+void processSerial() {
   if (!stringComplete) return;
 
   if (inputString.startsWith("DEVICE:")) {
-    dispositivoAudio = inputString.substring(7);
-    dispositivoAudio.trim();
-    actualizarPantalla();
+    audioDevice = inputString.substring(7);
+    audioDevice.trim();
+    updateDisplay();
   }
   else if (inputString.startsWith("VOLUME:")) {
-    volumen = inputString.substring(7).toInt();
-    actualizarPantalla();
+    volume = inputString.substring(7).toInt();
+    updateDisplay();
   }
 
   inputString = "";
@@ -141,44 +147,44 @@ void setup() {
   Keyboard.begin();
   Consumer.begin();
 
-  // Pantalla
+  // Display
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("Error OLED"));
+    Serial.println(F("OLED Error"));
     while (true);
   }
 
-  actualizarPantalla();
+  updateDisplay();
 }
 
 void loop() {
-  serialEvent();
-  procesarSerial();
+  readSerial();
+  processSerial();
 
-  long nuevaPosicion = myEncoder.read() / 4;
-  if (nuevaPosicion != posicionEncoder) {
-    int diferencia = nuevaPosicion - posicionEncoder;
-    if (millis() - ultimoCambioVolumen > debounceTiempo) {
-      cambiarVolumen(diferencia);
-      actualizarPantalla();
+  long newPosition = myEncoder.read() / 4;
+  if (newPosition != encoderPosition) {
+    int dif = newPosition - encoderPosition;
+    if (millis() - lastVolumeChange > debounceTime) {
+      changeVolume(dif);
+      updateDisplay();
     }
-    posicionEncoder = nuevaPosicion;
+    encoderPosition = newPosition;
   }
 
-  int lecturaBoton = digitalRead(swPin);
-  if (lecturaBoton != ultimoEstadoBoton) {
-    ultimoDebounceTime = millis();
+  int buttonRead = digitalRead(swPin);
+  if (buttonRead != lastbuttonState) {
+    lastDebounceTime = millis();
   }
 
-  if ((millis() - ultimoDebounceTime) > debounceDelay) {
-    if (lecturaBoton != estadoBoton) {
-      estadoBoton = lecturaBoton;
-      if (estadoBoton == LOW) {
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (buttonRead != buttonState) {
+      buttonState = buttonRead;
+      if (buttonState == LOW) {
         switchDevice();
-        actualizarPantalla();
+        updateDisplay();
       }
     }
   }
 
-  ultimoEstadoBoton = lecturaBoton;
+  lastbuttonState = buttonRead;
   delay(10);
 }
