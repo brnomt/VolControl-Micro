@@ -8,7 +8,7 @@
 #It communicates with the device over a serial port to control audio volume and display the current audio device, as well as to send volume and device information to the Arduino.
 
 #You can modify the code to suit your needs, or do whatever you want with it.
-#If you modify it, i'd be nice if you could share your modifications with me, so I can learn from them and improve my code <3.
+#If you modify it, it'd be nice if you could share your modifications with me, so I can learn from them and improve my code <3.
 
 
 
