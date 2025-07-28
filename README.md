@@ -34,7 +34,7 @@ VolControl transforms an **Arduino Pro Micro (ATmega32U4)**, an **SSD1306 OLED**
 
 ### 2. Python Controller (PC)
 
-'VolControl-SerialCOM.py', A Python script reads serial data and controls Windows volume using **PyCAW**.
+`VolControl-SerialCOM.py`, A Python script reads serial data and controls Windows volume using **PyCAW**.
 
 1. Install **Python 3.6+**  
 2. (Optional) Create & activate a virtual environment:
